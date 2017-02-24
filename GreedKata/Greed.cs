@@ -5,7 +5,7 @@ namespace GreedKata
 {
     public class Greed
     {
-        List<int> _diceRoll;
+        private List<int> _diceRoll;
 
         public void Roll(int[] diceRoll)
         {
@@ -14,7 +14,7 @@ namespace GreedKata
 
         public int Score()
         {
-            Dictionary<int, int> counts = new Dictionary<int, int> { { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 } };
+            Dictionary<int, int> counts = new Dictionary<int, int> {{1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}};
 
             IncrementCounters(counts);
 
@@ -23,25 +23,11 @@ namespace GreedKata
 
         private void IncrementCounters(Dictionary<int, int> counts)
         {
-            _diceRoll.ForEach(d => IncrementCounter(counts, d));
+            _diceRoll.ForEach(die => { counts[die] += 1; });
         }
 
         private int CalculateTotalScore(Dictionary<int, int> counts)
         {
-            int straightScore = CalculateStraightScore(counts);
-
-            if (straightScore > 0)
-            {
-                return straightScore;
-            }
-
-            int threePairsScore = CalculateThreePairsScore(counts);
-
-            if (threePairsScore > 0)
-            {
-                return threePairsScore;
-            }
-
             Dictionary<int, List<int>> points = new Dictionary<int, List<int>>
             {
                 {1, new List<int> {100, 1000}},
@@ -50,7 +36,7 @@ namespace GreedKata
                 {4, new List<int> {0, 400}},
                 {5, new List<int> {50, 500}},
                 {6, new List<int> {0, 600}}
-            };            
+            };
 
             Dictionary<int, int> scores = new Dictionary<int, int>
             {
@@ -63,26 +49,6 @@ namespace GreedKata
             };
 
             return scores.Values.Sum();
-        }
-
-        private int CalculateStraightScore(Dictionary<int, int> counts)
-        {
-            if (counts.Count(c => c.Value == 1) == 6)
-            {
-                return 1200;
-            }
-
-            return 0;
-        }
-
-        private static int CalculateThreePairsScore(Dictionary<int, int> counts)
-        {
-            if (counts.Count(c => c.Value == 2) == 3)
-            {
-                return 800;
-            }
-
-            return 0;
         }
 
         private int CalculateScore(int count, int singleScore, int tripleScore)
@@ -102,27 +68,12 @@ namespace GreedKata
                 return tripleScore;
             }
 
-            if (count == 4)
+            if (count > 3)
             {
-                return (2 * tripleScore);
-            }
-
-            if (count == 5)
-            {
-                return (4 * tripleScore);
-            }
-
-            if (count == 6)
-            {
-                return (8 * tripleScore);
+                return tripleScore + (count - 3) * singleScore;
             }
 
             return 0;
-        }
-
-        private void IncrementCounter(Dictionary<int, int> counts, int die)
-        {
-            counts[die] += 1;
         }
     }
 }
